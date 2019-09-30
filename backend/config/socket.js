@@ -14,42 +14,54 @@ module.exports = (io) => {
       userList[socket.id] = userName;
 
       io.to(socket.id).emit('initialConnect', {
-        connected: 'ok',
-        userName
+        connected: true,
+        userName,
+        userId: socket.id
       });
 
-
       const rooms = io.sockets.adapter.rooms;
+      console.log(io.sockets.adapter);
 
       for (let key in rooms) {
-        if (rooms[key].length === 1) {
+        if (key !== socket.id && rooms[key].length === 1) {
           socket.join(key);
           socketRoom[socket.id] = {
-            roomKey: key,
-            userName,
-            partnerName: userList[socket.id]
+            user1: {
+              name: userName,
+              id: socket.id
+            },
+            user2: {
+              name: userList[key],
+              id: key
+            },
+            chats: []
           };
 
           io.sockets.in(key).emit('completeMatch', {
-            match: 'ok',
-            roomInfo: socketRoom[socket.id]
+            matched: true,
+            users: socketRoom[socket.id]
           });
           console.log('rooms', rooms);
           console.log('socketRoom', socketRoom);
           return;
         }
       }
+      console.log('COMPLETE!!!!');
 
       socket.join(socket.id);
-      socketRoom[socket.id] = {
-        socketId: socket.id,
-        userName,
-        partnerName: null
-      };
+      // socketRoom[socket.id] = {
+      //   roomKey: socket.id,
+      //   user: {
+      //     name: userName,
+      //     id: socket.id
+      //   },
+      //   partner: null,
+      //   chats: []
+      // };
 
-      io.sockets.in(key).emit('completeMatch', {
-        match: 'pending',
-        roomInfo: socketRoom[socket.id]
+      io.to(socket.id).emit('completeMatch', {
+        matched: false
+        // roomInfo: socketRoom[socket.id]
       });
 
       console.log('rooms', rooms);
@@ -57,20 +69,23 @@ module.exports = (io) => {
     });
 
     socket.on('cancelRequest', (data) => {
-      console.log('cancel request');
+      console.log('cancel request', data);
       const key = socketRoom[socket.id];
       socket.leave(key);
+      io.sockets.in(key).emit('disconnect', {
+        disconnect: 'ok'
+      });
     });
 
     socket.on('disconnect', (data) => {
-      console.log('disconnect');
+      console.log('disconnect', data);
       const key = socketRoom[socket.id];
       socket.leave(key);
       io.sockets.in(key).emit('disconnect', {
         disconnect: 'ok'
       });
 
-      console.log(io.sockets.adapter);
+      console.log(io.sockets.adapter.rooms);
     });
 
 

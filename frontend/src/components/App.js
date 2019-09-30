@@ -11,8 +11,10 @@ const App = (props) => {
   } = props;
 
   const endPoint = 'http://localhost:8080';
-  const [ chatNickname, setChatNickname ] = useState(null);
   const [ name, setName ] = useState('');
+  const [ myInfo, setMyInfo ] = useState(null);
+  const [ partnerInfo, setPartnerInfo ] = useState(null);
+  const [ isConnecting, setConnectingStatus ] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,17 +26,38 @@ const App = (props) => {
     const socket = socketIOClient(endPoint);
     socket.emit('requestRandomChat', name);
     socket.on('initialConnect', data => {
-      console.log(data);
-      setName('');
-      setChatNickname(data.userName);
+      console.log('INITIAL CONNECT', data);
+      if (data.connected) {
+        setName('');
+        setMyInfo({
+          id: data.userId,
+          name: data.userName
+        });
+      }
+      socket.on('completeMatch', roomInfo => {
+        console.log(roomInfo);
+        if (roomInfo.matched) {
+          console.log(roomInfo.users);
+          console.log(roomInfo.users.user1);
+          console.log(roomInfo.users.user1.id);
+          console.log(data.userId);
+          if (roomInfo.users.user1.id === data.userId) {
+            setPartnerInfo(roomInfo.users.user2)
+          } else {
+            setPartnerInfo(roomInfo.users.user1)
+          }
+          console.log('PARTNER!!!',partnerInfo);
+          setConnectingStatus(false);
+        } else {
+          setConnectingStatus(true);
+        }
+      });
     });
-
-    // socket.on('initialConnect', data => {
-    //   console.log(data);
-    //   setName('');
-    //   setChatNickname(data.userName);
-    // });
   };
+
+  useEffect(() => {
+    console.log('MYINFO', myInfo);
+  }, [ myInfo ]);
 
   return (
     <div className="app-container">
@@ -63,13 +86,21 @@ const App = (props) => {
         </form>
       </div>
 
-      {chatNickname && (
+      {myInfo && (
         <div>
-          <p>{chatNickname}으로 입장하셨습니다.</p>
+          <p>{myInfo.name}으로 입장하셨습니다.</p>
         </div>
       )}
-      
-
+      {isConnecting && (
+        <div>
+          <p>상대방과 연결중입니다.</p>
+        </div>
+      )}
+      {partnerInfo && (
+        <div>
+          <p>{partnerInfo.name}님과 연결되었습니다.</p>
+        </div>
+      )}
       {/* <Switch>
         <Route
           exact path="/error"
