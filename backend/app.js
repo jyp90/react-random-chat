@@ -34,10 +34,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// const corsOption = {
-//   origin: process.env.CLIENT_URL
-// };
-
 app.use(cors());
 
 app.use('/', indexRouter);

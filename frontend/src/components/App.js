@@ -3,31 +3,74 @@ import { Route, Switch, Redirect } from 'react-router';
 import socketIOClient from 'socket.io-client';
 import Home from './Home';
 import Error from './Error';
-import './css/App.css';
+import './css/style.scss';
 
 const App = (props) => {
   console.log('props', props);
   const {
   } = props;
 
-  const [ response, setResponse ] = useState(false);
-  const [ endPoint, setEndPoint ] = useState('http://localhost:8080');
-  
-  useEffect(() => {
+  const endPoint = 'http://localhost:8080';
+  const [ chatNickname, setChatNickname ] = useState(null);
+  const [ name, setName ] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('NAME!!!!!',name);
+
+    if (!name.trim()) {
+      return;
+    }
     const socket = socketIOClient(endPoint);
-    socket.on('FromAPI', data => setResponse({
-      response: data
-    }));
-  }, [ endPoint ]);
+    socket.emit('requestRandomChat', name);
+    socket.on('initialConnect', data => {
+      console.log(data);
+      setName('');
+      setChatNickname(data.userName);
+    });
+
+    // socket.on('initialConnect', data => {
+    //   console.log(data);
+    //   setName('');
+    //   setChatNickname(data.userName);
+    // });
+  };
 
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>SAY HELLO!</h1>
-        <p>{ response }</p>
       </header>
 
-      <Switch>
+      <div>
+        <h2>Random Chat</h2>
+        <form
+          onSubmit={handleSubmit}
+        >
+          <input
+            type="text"
+            className="input-basic"
+            name="user_name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="btn-submit"
+          >
+            입장
+          </button>
+        </form>
+      </div>
+
+      {chatNickname && (
+        <div>
+          <p>{chatNickname}으로 입장하셨습니다.</p>
+        </div>
+      )}
+      
+
+      {/* <Switch>
         <Route
           exact path="/error"
           render={routerProps => (
@@ -45,7 +88,7 @@ const App = (props) => {
             />
           )}
         />
-      </Switch>
+      </Switch> */}
     </div>
   );
 }
