@@ -1,0 +1,1 @@
+export const POST_JOIN_PENDING = 'POST_JOIN_PENDING';
