@@ -1,11 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Redirect } from 'react-router';
 
-const Home = () => {
+const Home = (props) => {
+  const {
+    roomConnection,
+    handleRoomConnection
+  } = props;
+
+  const [ name, setName ] = useState('');
 
   return (
     <div className="container">
-      <h2>RANDOM CHAT</h2>
-      <div></div>
+      {roomConnection.isConnected && <Redirect to="/chat" />}
+
+      <h2>Random Chat</h2>
+      <form
+        onSubmit={e => {
+          setName('');
+          handleRoomConnection(e, name)
+        }}
+      >
+        <input
+          type="text"
+          className="input-basic"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        <button
+          type="submit"
+          className="btn-submit"
+        >
+          입장
+        </button>
+      </form>
     </div>
   );
 };

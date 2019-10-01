@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux';
-import reducer from './reducer';
+import roomConnection from './roomConnection';
+import roomDisconnection from './roomDisconnection';
+import roomMatch from './roomMatch';
 
 export default combineReducers({
-  reducer
+  roomConnection,
+  roomDisconnection,
+  roomMatch
 });

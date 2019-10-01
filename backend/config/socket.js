@@ -1,5 +1,6 @@
-const socketRoom = {};
-const userList = {};
+const totalChatList = {};
+const totalUserList = {};
+const waitingQueue = [];
 
 module.exports = (io) => {
   io.on('connection', (socket) => {
@@ -11,84 +12,95 @@ module.exports = (io) => {
       console.log('request random chat');
       console.log('Socket newName: ', userName);
       console.log('Socket id: ', socket.id);
-      userList[socket.id] = userName;
+      totalUserList[socket.id] = userName;
 
       io.to(socket.id).emit('initialConnect', {
         connected: true,
-        userName,
+        totalUserList,
         userId: socket.id
       });
 
-      const rooms = io.sockets.adapter.rooms;
-      console.log(io.sockets.adapter);
+      // console.log('socket=========',socket);
+      console.log(waitingQueue);
 
-      for (let key in rooms) {
-        if (key !== socket.id && rooms[key].length === 1) {
-          socket.join(key);
-          socketRoom[socket.id] = {
-            user1: {
-              name: userName,
-              id: socket.id
-            },
-            user2: {
-              name: userList[key],
-              id: key
-            },
-            chats: []
+      if (waitingQueue.length > 0) {
+        if (waitingQueue[0].id !== socket.id) {
+          console.log('WAITING!!!!!!!!!!!!!!');
+          const partner = waitingQueue.shift();
+          const roomKey = socket.id + partner.id;
+          socket.join(roomKey);
+          partner.join(roomKey);
+
+          // partner.leave(partner.id);
+          // socket.leave(socket.id);
+
+          // const totalRooms = io.sockets.adapter.rooms;
+          totalChatList[roomKey] = {
+            members: [socket.id, partner.id]
           };
 
-          io.sockets.in(key).emit('completeMatch', {
+          console.log('totalChatList!==',totalChatList);
+          io.to(socket.id).emit('completeMatch', {
             matched: true,
-            users: socketRoom[socket.id]
+            roomKey,
+            partner: {
+              id: partner.id,
+              name: totalUserList[partner.id]
+            }
           });
-          console.log('rooms', rooms);
-          console.log('socketRoom', socketRoom);
-          return;
+          io.to(partner.id).emit('completeMatch', {
+            matched: true,
+            roomKey,
+            partner: {
+              id: socket.id,
+              name: totalUserList[socket.id]
+            }
+          });
+
+          console.log('rooms--------');
+          console.log('COMPLETE!!!!');
         }
+      } else {
+        waitingQueue.push(socket);
+
+        io.to(socket.id).emit('completeMatch', {
+          matched: false
+        });
       }
-      console.log('COMPLETE!!!!');
-
-      socket.join(socket.id);
-      // socketRoom[socket.id] = {
-      //   roomKey: socket.id,
-      //   user: {
-      //     name: userName,
-      //     id: socket.id
-      //   },
-      //   partner: null,
-      //   chats: []
-      // };
-
-      io.to(socket.id).emit('completeMatch', {
-        matched: false
-        // roomInfo: socketRoom[socket.id]
-      });
-
-      console.log('rooms', rooms);
-      console.log('socketRoom', socketRoom);
     });
 
-    socket.on('cancelRequest', (data) => {
-      console.log('cancel request', data);
-      const key = socketRoom[socket.id];
-      socket.leave(key);
-      io.sockets.in(key).emit('disconnect', {
-        disconnect: 'ok'
-      });
+    socket.on('requestDisconnection', (data) => {
+      console.log('disconnect', data);
+      const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
+
+      console.log('PARTNER===============', roomKey);
+      if (roomKey) {
+        socket.broadcast.to(roomKey).emit('partnerDisconnection', {
+          disconnected: true
+        });
+        console.log('PARTNER===============', roomKey);
+        socket.leave(roomKey);
+        delete totalChatList[roomKey];
+      }
+      delete totalUserList[socket.id];
+
+      console.log('sockets adapter rooms after disconnection==',io.sockets.adapter.rooms);
     });
 
     socket.on('disconnect', (data) => {
       console.log('disconnect', data);
-      const key = socketRoom[socket.id];
-      socket.leave(key);
-      io.sockets.in(key).emit('disconnect', {
-        disconnect: 'ok'
+      const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
+
+      console.log('PARTNER===============', roomKey);
+      socket.broadcast.to(roomKey).emit('partnerDisconnection', {
+        disconnected: true
       });
+      console.log('PARTNER===============', roomKey);
+      delete totalChatList[roomKey];
+      delete totalUserList[socket.id];
 
-      console.log(io.sockets.adapter.rooms);
+      console.log('sockets adapter rooms after disconnection==',io.sockets.adapter.rooms);
     });
-
-
 
 
   });
