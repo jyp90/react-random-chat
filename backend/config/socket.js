@@ -57,7 +57,6 @@ module.exports = (io) => {
             }
           });
 
-          console.log('rooms--------');
           console.log('COMPLETE!!!!');
         }
       } else {
@@ -73,12 +72,11 @@ module.exports = (io) => {
       console.log('disconnect', data);
       const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
 
-      console.log('PARTNER===============', roomKey);
+      console.log('roomKey===============', roomKey);
       if (roomKey) {
         socket.broadcast.to(roomKey).emit('partnerDisconnection', {
           disconnected: true
         });
-        console.log('PARTNER===============', roomKey);
         socket.leave(roomKey);
         delete totalChatList[roomKey];
       }
@@ -89,13 +87,15 @@ module.exports = (io) => {
 
     socket.on('disconnect', (data) => {
       console.log('disconnect', data);
+      if (waitingQueue[0] && waitingQueue[0].id === socket.id) {
+        waitingQueue.shift();
+      }
       const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
 
-      console.log('PARTNER===============', roomKey);
+      console.log('roomKey===============', roomKey);
       socket.broadcast.to(roomKey).emit('partnerDisconnection', {
         disconnected: true
       });
-      console.log('PARTNER===============', roomKey);
       delete totalChatList[roomKey];
       delete totalUserList[socket.id];
 

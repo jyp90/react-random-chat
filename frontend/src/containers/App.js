@@ -35,9 +35,6 @@ const mapDispatchToProps = dispatch => ({
         }
 
       });
-      socket.on('requestDisconnection', (data) => {
-        
-      });
 
       socket.on('partnerDisconnection', (data) => {
         dispatch(action.partnerDisconnectionSuccess());
@@ -45,21 +42,16 @@ const mapDispatchToProps = dispatch => ({
     });
   },
   handleNextChatting: (name) => {
+    socket.emit('requestDisconnection');
     socket.emit('requestRandomChat', name);
     dispatch(action.partnerDisconnectionCancel());
     dispatch(action.matchPartnerRestart());
     socket.on('completeMatch', (roomData) => {
-      console.log(roomData);
-
       if (!roomData.matched) {
         dispatch(action.matchPartnerPending());
       } else {
         dispatch(action.matchPartnerSuccess(roomData));
       }
-
-    });
-    socket.on('requestDisconnection', (data) => {
-      
     });
 
     socket.on('partnerDisconnection', (data) => {

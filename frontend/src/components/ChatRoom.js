@@ -44,8 +44,16 @@ const ChatRoom = (props) => {
           </button>
         </div>
       )}
-      {!roomDisconnection.isDisconnected && (
+      {roomMatch.isMatched && !roomDisconnection.isDisconnected && (
         <>
+          <div>
+            <button
+              type="button"
+              onClick={() => handleNextChatting(roomConnection.info.name)}
+            >
+              NEXT CHATTING
+            </button>
+          </div>
           <div className="text-list">
             
           </div>
