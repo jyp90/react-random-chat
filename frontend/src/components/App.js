@@ -16,6 +16,8 @@ const App = (props) => {
     handleReconnection,
     handleNextChatting,
     handleTextSending,
+    handleTypingStart,
+    handleTypingStop,
     subscribeSocketEmit,
     subscribeTextMessage,
     unsubscribeTextMessage
@@ -61,6 +63,8 @@ const App = (props) => {
               handleReconnection={handleReconnection}
               handleNextChatting={handleNextChatting}
               handleTextSending={handleTextSending}
+              handleTypingStart={handleTypingStart}
+              handleTypingStop={handleTypingStop}
             />
           )}
         />

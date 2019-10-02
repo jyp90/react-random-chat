@@ -1,6 +1,7 @@
 import * as type from '../constants/actionTypes';
 
 const textSendState = {
+  isTyping: false,
   chats: [],
   isError: false
 };
@@ -23,6 +24,16 @@ const textSending = (state = textSendState, action) => {
       return {
         ...state,
         chats: []
+      };
+    case (type.START_TYPING):
+      return {
+        ...state,
+        isTyping: true
+      };
+    case (type.STOP_TYPING):
+      return {
+        ...state,
+        isTyping: false
       };
     default:
       return state;

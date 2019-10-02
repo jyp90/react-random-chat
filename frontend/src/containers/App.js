@@ -16,7 +16,6 @@ const mapDispatchToProps = dispatch => ({
     if (!name.trim()) {
       return;
     }
-
     socket.emit('requestRandomChat', name);
   },
   handleReconnection: (name) => {
@@ -27,25 +26,29 @@ const mapDispatchToProps = dispatch => ({
   },
   handleNextChatting: (name) => {
     socket.emit('requestDisconnection');
+    socket.emit('requestRandomChat', name);
     dispatch(action.clearChatTexts());
     dispatch(action.partnerDisconnectionPending());
     dispatch(action.matchPartnerRestart());
-    socket.emit('requestRandomChat', name);
   },
-  handleTextSending: (text, roomKey, socketId, partnerId) => {
+  handleTextSending: (text, roomKey, socketId) => {
     if (!text.trim()) {
       return;
     }
     socket.emit('sendTextMessage', text, roomKey, socketId);
   },
+  handleTypingStart: () => {
+    socket.emit('startTyping');
+  },
+  handleTypingStop: () => {
+    socket.emit('stopTyping');
+  },
   subscribeSocketEmit: () => {
     socket.on('initialConnect', (data) => {
-      console.log('INITIAL CONNECT', data);
       dispatch(action.enterNewRoomSuccess(data));
     });
-    socket.on('completeMatch', (roomData) => {
-      console.log(roomData);
 
+    socket.on('completeMatch', (roomData) => {
       if (!roomData.matched) {
         dispatch(action.matchPartnerPending());
       } else {
@@ -58,10 +61,17 @@ const mapDispatchToProps = dispatch => ({
       dispatch(action.clearChatTexts());
       dispatch(action.partnerDisconnectionSuccess());
     });
+
+    socket.on('startTyping', () => {
+      dispatch(action.startTyping());
+    });
+
+    socket.on('stopTyping', () => {
+      dispatch(action.stopTyping());
+    });
   },
   subscribeTextMessage: () => {
     socket.once('sendTextMessage', ({ chat }) => {
-      console.log('Trigger!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       return dispatch(action.sendNewTextSuccess(chat));
     });
   },

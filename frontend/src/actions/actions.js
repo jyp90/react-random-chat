@@ -42,3 +42,9 @@ export const sendNewTextFailure = () => ({
 export const clearChatTexts = () => ({
   type: type.CLEAR_CHAT_TEXTS
 });
+export const startTyping = () => ({
+  type: type.START_TYPING
+});
+export const stopTyping = () => ({
+  type: type.STOP_TYPING
+});

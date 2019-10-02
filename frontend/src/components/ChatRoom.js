@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { debounce } from 'lodash';
 
 const ChatRoom = (props) => {
   const {
@@ -9,11 +10,53 @@ const ChatRoom = (props) => {
     textSending,
     handleNextChatting,
     handleReconnection,
-    handleTextSending
-    // handleTextReceiving
+    handleTextSending,
+    handleTypingStart,
+    handleTypingStop
   } = props;
 
-  const [ chat, setChat ] = useState('');
+  let textInput = React.createRef();
+
+  const WAIT_INTERVAL = 1000;
+  const ENTER_KEY = 13;
+
+  let timer = null;
+
+  useEffect(() => {
+    return () => {
+      timer = null;
+    };
+  });
+
+  const triggerChange = () => {
+    if (textInput.current.value.trim()) {
+      handleTypingStop();
+    }
+    timer = null;
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode === ENTER_KEY) {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      triggerChange();
+    }
+  }
+
+  const debouncehandleTypingStart = debounce(() => handleTypingStart(), 500, {
+    leading: true,
+    trailing: false
+  });
+
+  const handleChange = (e) => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    debouncehandleTypingStart();
+
+    timer = setTimeout(triggerChange, WAIT_INTERVAL);
+  };
 
   return (
     <div className="chat-container">
@@ -21,7 +64,7 @@ const ChatRoom = (props) => {
 
       {roomConnection.info && roomConnection.info.name && (
         <div>
-          <p>{roomConnection.info.name}으로 입장하셨습니다.</p>
+          <p>{roomConnection.info.name}님으로 입장하셨습니다.</p>
         </div>
       )}
       {!roomMatch.isMatched && (
@@ -45,7 +88,7 @@ const ChatRoom = (props) => {
             type="button"
             onClick={() => handleReconnection(roomConnection.info.name)}
           >
-            다시 연결
+            입장
           </button>
         </div>
       )}
@@ -56,7 +99,7 @@ const ChatRoom = (props) => {
               type="button"
               onClick={() => handleNextChatting(roomConnection.info.name)}
             >
-              NEXT CHATTING
+              다음 사람
             </button>
           </div>
           <ul className="text-list">
@@ -76,24 +119,31 @@ const ChatRoom = (props) => {
             onSubmit={e => {
               e.preventDefault();
 
-              handleTextSending(chat, roomMatch.key, roomConnection.info.id);
-              setChat('');
+              handleTextSending(textInput.current.value, roomMatch.key, roomConnection.info.id);
+              textInput.current.value = '';
+              textInput.current.focus();
             }}
           >
+            {textSending.isTyping && (
+              <div>
+                <p>
+                  상대방이 입력중입니다...
+                </p>
+              </div>
+            )}
             <input
               type="text"
               className="input-basic"
-              value={chat}
-              onChange={e => setChat(e.target.value)}
+              ref={textInput}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
             />
-            {!!chat.trim() && (
-              <button
-                type="submit"
-                className="btn-submit"
-              >
-                SEND
-              </button>
-            )}
+            <button
+              type="submit"
+              className="btn-submit"
+            >
+              전송
+            </button>
           </form>
         </>
       )}
