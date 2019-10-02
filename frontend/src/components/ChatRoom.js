@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { debounce } from 'lodash';
 
@@ -22,11 +22,11 @@ const ChatRoom = (props) => {
 
   let timer = null;
 
-  useEffect(() => {
-    return () => {
-      timer = null;
-    };
-  });
+  // useEffect(() => {
+  //   return () => {
+  //     timer = null;
+  //   };
+  // });
 
   const triggerChange = () => {
     if (textInput.current.value.trim()) {

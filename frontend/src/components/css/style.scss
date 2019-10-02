@@ -1,0 +1,29 @@
+@import 'variables';
+
+body {
+  font-family: 'Gothic A1', sans-serif;
+  color: $dark-gray;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+.app-container {
+  min-height: 100vh;
+  background: $dark-gray;
+}
+.app-header {
+  text-align: center;
+  background: #fff;
+  .logo {
+    margin: 0;
+    padding: 35px 0;
+    color: $dark-orange;
+    font-size: 24px;
+    font-weight: 400;
+  }
+}

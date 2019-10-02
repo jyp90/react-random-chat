@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect } from 'react-router';
+import React, { useEffect } from 'react';
+import { Route, Switch } from 'react-router';
 import Home from './Home';
 import ChatRoom from './ChatRoom';
 import Error from './Error';
+import './css/normalize.v8.0.1.css';
 import './css/style.scss';
 
 const App = (props) => {
@@ -33,12 +34,12 @@ const App = (props) => {
     return () => {
       unsubscribeTextMessage();
     };
-  }, [ subscribeTextMessage, textSending.chats ]);
+  }, [ textSending.chats, subscribeTextMessage, unsubscribeTextMessage ]);
 
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>SAY HELLO!</h1>
+        <h1 className="logo">SAY HELLO!</h1>
       </header>
 
       <Switch>
@@ -80,7 +81,6 @@ const App = (props) => {
             />
           )}
         />
-
       </Switch>
     </div>
   );

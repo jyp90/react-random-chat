@@ -7,7 +7,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import rootReducer from './reducers';
 import App from './containers/App';
 import * as serviceWorker from './serviceWorker';
-import './index.css';
 
 const store = createStore(rootReducer, applyMiddleware(logger));
 
