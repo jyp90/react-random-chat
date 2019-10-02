@@ -15,8 +15,13 @@ const App = (props) => {
     handleRoomConnection,
     handleNextChatting,
     handleTextSending,
-    handleTextReceiving
+    handleTextReceiving,
+    subscribeSocketEmit
   } = props;
+
+  useEffect(() => {
+    subscribeSocketEmit();
+  }, [ subscribeSocketEmit ]);
 
   return (
     <div className="app-container">

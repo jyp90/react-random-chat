@@ -8,6 +8,8 @@ module.exports = (io) => {
     console.log('접속자 아이디!!!!!!!!!!', socket.id);
     socket.emit('connected');
 
+    
+    
     socket.on('requestRandomChat', (userName) => {
       console.log('request random chat');
       console.log('Socket newName: ', userName);
@@ -74,8 +76,8 @@ module.exports = (io) => {
         id: socketId,
         text
       };
-      console.log('sendTextMessage', newChat);
       totalChatList[roomKey].chats.push(newChat);
+      console.log('sendTextMessage', newChat, totalChatList);
 
       io.sockets.in(roomKey).emit('sendTextMessage', {
         chat: newChat
@@ -115,7 +117,5 @@ module.exports = (io) => {
 
       console.log('sockets adapter rooms after disconnection==',io.sockets.adapter.rooms);
     });
-
-
   });
 };

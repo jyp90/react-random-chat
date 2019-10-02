@@ -15,6 +15,7 @@ const ChatRoom = (props) => {
   const [ chat, setChat ] = useState('');
 
   useEffect(() => {
+    console.log('receiving messages====================================');
     handleTextReceiving();
   }, [ textSending.chats, handleTextReceiving ]);
 

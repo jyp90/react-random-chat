@@ -12,38 +12,15 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleRoomConnection: (name) => {
-    if (!name.trim()) {
-      return;
-    }
-
-    socket.emit('requestRandomChat', name);
+  subscribeSocketEmit: () => {
     socket.on('initialConnect', (data) => {
       console.log('INITIAL CONNECT', data);
       dispatch(action.enterNewRoomSuccess(data));
 
-      socket.on('completeMatch', (roomData) => {
-        console.log(roomData);
-
-        if (!roomData.matched) {
-          dispatch(action.matchPartnerPending());
-        } else {
-          dispatch(action.matchPartnerSuccess(roomData));
-        }
-
-      });
-
-      socket.on('partnerDisconnection', (data) => {
-        dispatch(action.partnerDisconnectionSuccess());
-      });
     });
-  },
-  handleNextChatting: (name) => {
-    socket.emit('requestDisconnection');
-    socket.emit('requestRandomChat', name);
-    dispatch(action.partnerDisconnectionCancel());
-    dispatch(action.matchPartnerRestart());
     socket.on('completeMatch', (roomData) => {
+      console.log(roomData);
+
       if (!roomData.matched) {
         dispatch(action.matchPartnerPending());
       } else {
@@ -51,18 +28,31 @@ const mapDispatchToProps = dispatch => ({
       }
     });
 
-    socket.on('partnerDisconnection', (data) => {
+    socket.on('partnerDisconnection', () => {
       dispatch(action.clearChatTexts());
       dispatch(action.partnerDisconnectionSuccess());
     });
+  },
+  handleRoomConnection: (name) => {
+    if (!name.trim()) {
+      return;
+    }
+
+    socket.emit('requestRandomChat', name);
+  },
+  handleNextChatting: (name) => {
+    socket.emit('requestDisconnection');
+    socket.emit('requestRandomChat', name);
+    dispatch(action.partnerDisconnectionCancel());
+    dispatch(action.matchPartnerRestart());
   },
   handleTextSending: (text, roomKey, socketId, partnerId) => {
     socket.emit('sendTextMessage', text, roomKey, socketId);
   },
   handleTextReceiving: () => {
     socket.once('sendTextMessage', ({ chat }) => {
-      console.log('CHAT!!', chat);
-      dispatch(action.sendNewTextSuccess(chat));
+      console.log('Trigger!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      return dispatch(action.sendNewTextSuccess(chat));
     });
   }
 });
