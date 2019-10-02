@@ -8,14 +8,11 @@ const socket = socketIOClient(SERVER_URL);
 
 const mapStateToProps = state => {
   console.log('STATE-------',state);
-  return {
-    ...state
-  };
+  return state;
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleRoomConnection: (e, name) => {
-    e.preventDefault();
+  handleRoomConnection: (name) => {
     if (!name.trim()) {
       return;
     }
@@ -55,7 +52,17 @@ const mapDispatchToProps = dispatch => ({
     });
 
     socket.on('partnerDisconnection', (data) => {
+      dispatch(action.clearChatTexts());
       dispatch(action.partnerDisconnectionSuccess());
+    });
+  },
+  handleTextSending: (text, roomKey, socketId, partnerId) => {
+    socket.emit('sendTextMessage', text, roomKey, socketId);
+  },
+  handleTextReceiving: () => {
+    socket.once('sendTextMessage', ({ chat }) => {
+      console.log('CHAT!!', chat);
+      dispatch(action.sendNewTextSuccess(chat));
     });
   }
 });

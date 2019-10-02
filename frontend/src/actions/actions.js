@@ -31,3 +31,14 @@ export const partnerDisconnectionCancel = () => ({
 export const partnerDisconnectionFailure = () => ({
   type: type.PARTNER_DISCONNECTION_FAILURE
 });
+
+export const sendNewTextSuccess = (chat) => ({
+  type: type.SEND_NEW_TEXT_SUCCESS,
+  chat
+});
+export const sendNewTextFailure = () => ({
+  type: type.SEND_NEW_TEXT_FAILURE
+});
+export const clearChatTexts = () => ({
+  type: type.CLEAR_CHAT_TEXTS
+});

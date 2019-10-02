@@ -16,8 +16,10 @@ const Home = (props) => {
       <h2>Random Chat</h2>
       <form
         onSubmit={e => {
+          e.preventDefault();
+
           setName('');
-          handleRoomConnection(e, name)
+          handleRoomConnection(name);
         }}
       >
         <input

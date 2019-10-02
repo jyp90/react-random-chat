@@ -11,8 +11,11 @@ const App = (props) => {
     roomMatch,
     roomConnection,
     roomDisconnection,
+    textSending,
     handleRoomConnection,
-    handleNextChatting
+    handleNextChatting,
+    handleTextSending,
+    handleTextReceiving
   } = props;
 
   return (
@@ -38,8 +41,11 @@ const App = (props) => {
               {...routerProps}
               roomMatch={roomMatch}
               roomConnection={roomConnection}
+              textSending={textSending}
               roomDisconnection={roomDisconnection}
               handleNextChatting={handleNextChatting}
+              handleTextSending={handleTextSending}
+              handleTextReceiving={handleTextReceiving}
             />
           )}
         />

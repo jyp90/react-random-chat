@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 
 const ChatRoom = (props) => {
@@ -6,9 +6,17 @@ const ChatRoom = (props) => {
     roomMatch,
     roomConnection,
     roomDisconnection,
-    handleNextChatting
+    textSending,
+    handleNextChatting,
+    handleTextSending,
+    handleTextReceiving
   } = props;
+
   const [ chat, setChat ] = useState('');
+
+  useEffect(() => {
+    handleTextReceiving();
+  }, [ textSending.chats, handleTextReceiving ]);
 
   return (
     <div className="chat-container">
@@ -54,11 +62,24 @@ const ChatRoom = (props) => {
               NEXT CHATTING
             </button>
           </div>
-          <div className="text-list">
-            
-          </div>
+          <ul className="text-list">
+            {textSending.chats.length > 0 && (
+              textSending.chats.map((chat, index) => {
+                const isMyText = roomConnection.info.id === chat.id;
+
+                return (
+                  <li key={chat.id + index} className={isMyText ? 'me' : 'partner'}>
+                    {chat.text}
+                  </li>
+                );
+              })
+            )}
+          </ul>
           <form
             onSubmit={e => {
+              e.preventDefault();
+
+              handleTextSending(chat, roomMatch.key, roomConnection.info.id);
               setChat('');
             }}
           >
@@ -68,12 +89,14 @@ const ChatRoom = (props) => {
               value={chat}
               onChange={e => setChat(e.target.value)}
             />
-            <button
-              type="submit"
-              className="btn-submit"
-            >
-              SEND
-            </button>
+            {!!chat.trim() && (
+              <button
+                type="submit"
+                className="btn-submit"
+              >
+                SEND
+              </button>
+            )}
           </form>
         </>
       )}

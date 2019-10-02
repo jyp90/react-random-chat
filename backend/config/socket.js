@@ -36,7 +36,8 @@ module.exports = (io) => {
 
           // const totalRooms = io.sockets.adapter.rooms;
           totalChatList[roomKey] = {
-            members: [socket.id, partner.id]
+            members: [socket.id, partner.id],
+            chats: []
           };
 
           console.log('totalChatList!==',totalChatList);
@@ -68,8 +69,21 @@ module.exports = (io) => {
       }
     });
 
+    socket.on('sendTextMessage', (text, roomKey, socketId) => {
+      const newChat = {
+        id: socketId,
+        text
+      };
+      console.log('sendTextMessage', newChat);
+      totalChatList[roomKey].chats.push(newChat);
+
+      io.sockets.in(roomKey).emit('sendTextMessage', {
+        chat: newChat
+      });
+    });
+
     socket.on('requestDisconnection', (data) => {
-      console.log('disconnect', data);
+      console.log('requestDisconnection', data);
       const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
 
       console.log('roomKey===============', roomKey);
