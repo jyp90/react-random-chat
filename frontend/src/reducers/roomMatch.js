@@ -1,7 +1,6 @@
 import * as type from '../constants/actionTypes';
 
 const matchState = {
-  isMatching: false,
   isMatched: false,
   partner: null,
   key: null,
@@ -13,12 +12,11 @@ const roomMatch = (state = matchState, action) => {
     case (type.MATCH_PARTNER_PENDING):
       return {
         ...state,
-        isMatching: true
+        isMatched: false
       };
     case (type.MATCH_PARTNER_SUCCESS):
       return {
         ...state,
-        isMatching: false,
         isMatched: true,
         partner: action.partner,
         key: action.roomKey
@@ -26,7 +24,6 @@ const roomMatch = (state = matchState, action) => {
     case (type.MATCH_PARTNER_RESTART):
       return {
         ...state,
-        isMatching: false,
         isMatched: false,
         partner: null,
         key: null,
@@ -35,7 +32,6 @@ const roomMatch = (state = matchState, action) => {
     case (type.MATCH_PARTNER_FAILURE):
       return {
         ...state,
-        isMatching: false,
         isError: true
       };
     default:

@@ -25,8 +25,8 @@ export const matchPartnerFailure = () => ({
 export const partnerDisconnectionSuccess = () => ({
   type: type.PARTNER_DISCONNECTION_SUCCESS
 });
-export const partnerDisconnectionCancel = () => ({
-  type: type.PARTNER_DISCONNECTION_CANCEL
+export const partnerDisconnectionPending = () => ({
+  type: type.PARTNER_DISCONNECTION_PENDING
 });
 export const partnerDisconnectionFailure = () => ({
   type: type.PARTNER_DISCONNECTION_FAILURE

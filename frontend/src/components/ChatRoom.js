@@ -8,16 +8,12 @@ const ChatRoom = (props) => {
     roomDisconnection,
     textSending,
     handleNextChatting,
-    handleTextSending,
-    handleTextReceiving
+    handleReconnection,
+    handleTextSending
+    // handleTextReceiving
   } = props;
 
   const [ chat, setChat ] = useState('');
-
-  useEffect(() => {
-    console.log('receiving messages====================================');
-    handleTextReceiving();
-  }, [ textSending.chats, handleTextReceiving ]);
 
   return (
     <div className="chat-container">
@@ -28,7 +24,7 @@ const ChatRoom = (props) => {
           <p>{roomConnection.info.name}으로 입장하셨습니다.</p>
         </div>
       )}
-      {roomMatch.isMatching && (
+      {!roomMatch.isMatched && (
         <div>
           <p>상대방과 연결중입니다.</p>
         </div>
@@ -47,9 +43,9 @@ const ChatRoom = (props) => {
           </p>
           <button
             type="button"
-            onClick={() => handleNextChatting(roomConnection.info.name)}
+            onClick={() => handleReconnection(roomConnection.info.name)}
           >
-            NEXT CHATTING
+            다시 연결
           </button>
         </div>
       )}

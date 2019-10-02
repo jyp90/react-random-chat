@@ -13,15 +13,25 @@ const App = (props) => {
     roomDisconnection,
     textSending,
     handleRoomConnection,
+    handleReconnection,
     handleNextChatting,
     handleTextSending,
-    handleTextReceiving,
-    subscribeSocketEmit
+    subscribeSocketEmit,
+    subscribeTextMessage,
+    unsubscribeTextMessage
   } = props;
 
   useEffect(() => {
     subscribeSocketEmit();
   }, [ subscribeSocketEmit ]);
+
+  useEffect(() => {
+    subscribeTextMessage();
+
+    return () => {
+      unsubscribeTextMessage();
+    };
+  }, [ subscribeTextMessage, textSending.chats ]);
 
   return (
     <div className="app-container">
@@ -48,9 +58,9 @@ const App = (props) => {
               roomConnection={roomConnection}
               textSending={textSending}
               roomDisconnection={roomDisconnection}
+              handleReconnection={handleReconnection}
               handleNextChatting={handleNextChatting}
               handleTextSending={handleTextSending}
-              handleTextReceiving={handleTextReceiving}
             />
           )}
         />

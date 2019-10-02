@@ -12,7 +12,7 @@ const roomDisconnection = (state = disconnectionState, action) => {
         ...state,
         isDisconnected: true
       };
-    case (type.PARTNER_DISCONNECTION_CANCEL):
+    case (type.PARTNER_DISCONNECTION_PENDING):
       return {
         ...state,
         isDisconnected: false
