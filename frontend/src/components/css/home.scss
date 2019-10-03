@@ -2,15 +2,20 @@
 
 $screen-xs-max: 300px;
 $screen-sm-max: 400px;
+$screen-md-max: 600px;
 
+@mixin xs {
+  @media (max-width: #{$screen-xs-max}) {
+      @content;
+  }
+}
 @mixin sm {
   @media (max-width: #{$screen-sm-max}) {
       @content;
   }
 }
-
-@mixin xs {
-  @media (max-width: #{$screen-xs-max}) {
+@mixin md {
+  @media (max-width: #{$screen-md-max}) {
       @content;
   }
 }
@@ -27,10 +32,16 @@ $screen-sm-max: 400px;
   width: 100%;
   height: 300px;
   background: url('../img/bg_01.jpg') no-repeat center / cover;
+  @include md {
+    height: 160px;
+  }
 }
 .home-title {
   font-weight: 600;
   font-size: 35px;
+  @include md {
+    font-size: 28px;
+  }
 }
 .home-desc {
   width: 100%;
@@ -47,11 +58,9 @@ $screen-sm-max: 400px;
   border: none;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-
   @include xs {
     width: 140px;
   }
-
   @include sm {
     width: 150px;
   }
