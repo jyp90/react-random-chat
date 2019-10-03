@@ -42,7 +42,11 @@ const subscribeSocket = (dispatch) => {
   });
 
   socket.on('sendTextMessage', ({ chat }) => {
-    return dispatch(action.sendNewTextSuccess(chat));
+    dispatch(action.sendNewTextSuccess(chat));
+  });
+
+  socket.on('disconnect', () => {
+    dispatch(action.connectChatFailure());
   });
 };
 
