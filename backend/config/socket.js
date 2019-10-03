@@ -4,12 +4,9 @@ const waitingQueue = [];
 
 module.exports = (io) => {
   io.on('connection', (socket) => {
-    console.log('connected');
-    console.log('접속자 아이디:', socket.id);
     socket.emit('connected');
 
     socket.on('requestRandomChat', (userName) => {
-      console.log('request random chat');
       totalUserList[socket.id] = userName;
 
       io.to(socket.id).emit('initialConnect', {
@@ -55,7 +52,6 @@ module.exports = (io) => {
     });
 
     socket.on('sendTextMessage', (text, socketId) => {
-      console.log('sendTextMessage');
       const roomKey = totalRoomList[socket.id];
       const newChat = {
         id: socketId,
@@ -68,21 +64,18 @@ module.exports = (io) => {
     });
 
     socket.on('startTyping', () => {
-      console.log('startTyping!!');
       const roomKey = totalRoomList[socket.id];
 
       socket.broadcast.to(roomKey).emit('startTyping');
     });
 
     socket.on('stopTyping', () => {
-      console.log('stopTyping!!');
       const roomKey = totalRoomList[socket.id];
 
       socket.broadcast.to(roomKey).emit('stopTyping');
     });
 
     socket.on('requestDisconnection', () => {
-      console.log('requestDisconnection');
       const roomKey = totalRoomList[socket.id];
       socket.leave(roomKey);
 
@@ -97,7 +90,6 @@ module.exports = (io) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('disconnect');
       if (waitingQueue[0] && waitingQueue[0].id === socket.id) {
         waitingQueue.shift();
       }
@@ -109,11 +101,12 @@ module.exports = (io) => {
     });
 
     socket.on('connect_error', (err) => {
-      console.log('connect_error', err);
+      console.log('connect error', err);
       socket.emit('connect_error', err);
     });
+
     socket.on('error', (err) => {
-      console.log('error');
+      console.log('error', err);
       socket.emit('error', err);
     });
   });

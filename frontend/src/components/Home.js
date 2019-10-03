@@ -28,6 +28,10 @@ const Home = (props) => {
             onSubmit={e => {
               e.preventDefault();
 
+              if (name.trim().length > MAX_NAME_LENGTH) {
+                return;
+              }
+
               handleRoomConnection(name);
               setName('');
             }}
