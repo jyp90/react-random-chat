@@ -9,8 +9,28 @@ ul {
   padding: 0;
   list-style: none;
 }
+p {
+  margin: 0;
+}
 a {
   text-decoration: none;
+}
+button {
+  cursor: pointer;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 20px;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: none;
+}
+::-webkit-scrollbar-thumb {
+  background-color: $gray;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-button {
+  display: none;
 }
 .app-container {
   min-height: 100vh;
@@ -18,7 +38,6 @@ a {
 }
 .app-header {
   text-align: center;
-  background: #fff;
   .logo {
     margin: 0;
     padding: 35px 0;

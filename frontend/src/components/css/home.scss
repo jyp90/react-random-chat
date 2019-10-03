@@ -1,10 +1,25 @@
 @import 'variables';
 
+$screen-xs-max: 300px;
+$screen-sm-max: 400px;
+
+@mixin sm {
+  @media (max-width: #{$screen-sm-max}) {
+      @content;
+  }
+}
+
+@mixin xs {
+  @media (max-width: #{$screen-xs-max}) {
+      @content;
+  }
+}
+
 .home-title {
   margin: 0;
 }
 .box-wrapper {
-  padding: 60px 30px 0;
+  padding: 60px 30px;
   text-align: center;
   color: #fff;
 }
@@ -18,9 +33,10 @@
   font-size: 35px;
 }
 .home-desc {
-  width: 460px;
+  width: 100%;
+  max-width: 460px;
   margin: 30px auto 50px;
-  line-height: 1.5;
+  line-height: 1.6;
   font-size: 18px;
 }
 .input-basic {
@@ -31,6 +47,14 @@
   border: none;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+
+  @include xs {
+    width: 140px;
+  }
+
+  @include sm {
+    width: 150px;
+  }
 }
 .btn-submit {
   width: 80px;

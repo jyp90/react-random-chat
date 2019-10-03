@@ -76,6 +76,20 @@ module.exports = (io) => {
       });
     });
 
+    socket.on('startTyping', () => {
+      console.log('startTyping!!');
+      const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
+
+      socket.broadcast.to(roomKey).emit('startTyping');
+    });
+
+    socket.on('stopTyping', () => {
+      console.log('stopTyping!!');
+      const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
+
+      socket.broadcast.to(roomKey).emit('stopTyping');
+    });
+
     socket.on('requestDisconnection', () => {
       console.log('requestDisconnection');
       const roomKey = Object.keys(totalChatList).find(key => key.indexOf(socket.id) > -1);
