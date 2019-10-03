@@ -18,6 +18,9 @@ a {
 button {
   cursor: pointer;
 }
+input:focus {
+  outline: none;
+}
 ::-webkit-scrollbar {
   width: 10px;
   height: 20px;
@@ -34,15 +37,31 @@ button {
 }
 .app-container {
   min-height: 100vh;
-  background: $dark-gray;
+  background: #000;
 }
 .app-header {
   text-align: center;
+  background: $dark-gray;
   .logo {
     margin: 0;
-    padding: 35px 0;
-    color: $dark-orange;
-    font-size: 24px;
+    padding: 18px 0 10px;
+    color: $orange;
+    font-size: 23px;
     font-weight: 400;
+    span {
+      position: relative;
+      display: inline-block;
+      padding-right: 35px;
+    }
+    span:after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: 0;
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      background: url('../img/bubble.png') no-repeat center / cover;
+    }
   }
 }

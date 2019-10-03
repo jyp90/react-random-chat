@@ -2,8 +2,7 @@ import * as type from '../constants/actionTypes';
 
 const textSendState = {
   isTyping: false,
-  chats: [],
-  isError: false
+  chats: []
 };
 
 const textSending = (state = textSendState, action) => {
@@ -11,14 +10,10 @@ const textSending = (state = textSendState, action) => {
     case (type.SEND_NEW_TEXT_SUCCESS):
       const newChats = state.chats.slice();
       newChats.push(action.chat);
+
       return {
         ...state,
         chats: newChats
-      };
-    case (type.SEND_NEW_TEXT_FAILURE):
-      return {
-        ...state,
-        isError: true
       };
     case (type.CLEAR_CHAT_TEXTS):
       return {

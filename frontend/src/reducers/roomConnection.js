@@ -2,13 +2,19 @@ import * as type from '../constants/actionTypes';
 
 const connectionState = {
   isConnected: false,
+  isPartnerUnlinked: false,
   info: null,
   isError: false
 };
 
 const roomConnection = (state = connectionState, action) => {
   switch (action.type) {
-    case (type.ENTER_NEW_ROOM_SUCCESS):
+    case (type.DISCONNECT_CHAT_SUCCESS):
+      return {
+        ...state,
+        isPartnerUnlinked: true
+      };
+    case (type.CONNECT_CHAT_SUCCESS):
       return {
         ...state,
         isConnected: true,
@@ -17,7 +23,12 @@ const roomConnection = (state = connectionState, action) => {
           name: action.totalUserList[action.userId]
         }
       };
-    case (type.ENTER_NEW_ROOM_FAILURE):
+    case (type.RECONNECT_CHAT_SUCCESS):
+      return {
+        ...state,
+        isPartnerUnlinked: false
+      };
+    case (type.CONNECT_CHAT_FAILURE):
       return {
         ...state,
         isError: true

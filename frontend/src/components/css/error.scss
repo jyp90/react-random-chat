@@ -1,0 +1,39 @@
+@import 'variables';
+
+.error-box {
+  position: relative;
+  padding-top: 30px;
+  text-align: center;
+  font-weight: 300;
+  a {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $dark-gray;
+    background: $light-mint;
+    border-radius: 10px;
+  }
+}
+.error-box:before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  margin-left: -20px;
+  background: $light-mint;
+}
+.error-box p {
+  color: $light-mint;
+}
+.error-title {
+  font-size: 30px;
+}
+.error-msg {
+  margin-top: 10px;
+  font-size: 25px;
+}

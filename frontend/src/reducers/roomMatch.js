@@ -2,9 +2,7 @@ import * as type from '../constants/actionTypes';
 
 const matchState = {
   isMatched: false,
-  partner: null,
-  key: null,
-  isError: false
+  partner: null
 };
 
 const roomMatch = (state = matchState, action) => {
@@ -19,20 +17,12 @@ const roomMatch = (state = matchState, action) => {
         ...state,
         isMatched: true,
         partner: action.partner,
-        key: action.roomKey
       };
     case (type.MATCH_PARTNER_RESTART):
       return {
         ...state,
         isMatched: false,
-        partner: null,
-        key: null,
-        isError: false
-      };
-    case (type.MATCH_PARTNER_FAILURE):
-      return {
-        ...state,
-        isError: true
+        partner: null
       };
     default:
       return state;

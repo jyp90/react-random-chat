@@ -54,8 +54,9 @@ module.exports = (io) => {
       }
     });
 
-    socket.on('sendTextMessage', (text, roomKey, socketId) => {
+    socket.on('sendTextMessage', (text, socketId) => {
       console.log('sendTextMessage');
+      const roomKey = totalRoomList[socket.id];
       const newChat = {
         id: socketId,
         text
@@ -105,6 +106,15 @@ module.exports = (io) => {
       socket.broadcast.to(roomKey).emit('partnerDisconnection', roomKey);
       delete totalRoomList[socket.id];
       delete totalUserList[socket.id];
+    });
+
+    socket.on('connect_error', (err) => {
+      console.log('connect_error', err);
+      socket.emit('connect_error', err);
+    });
+    socket.on('error', (err) => {
+      console.log('error');
+      socket.emit('error', err);
     });
   });
 };

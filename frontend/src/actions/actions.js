@@ -1,50 +1,48 @@
 import * as type from '../constants/actionTypes';
 
-export const enterNewRoomSuccess = (data) => ({
-  type: type.ENTER_NEW_ROOM_SUCCESS,
+export const connectChatSuccess = (data) => ({
+  type: type.CONNECT_CHAT_SUCCESS,
   ...data
 });
-export const enterNewRoomFailure = () => ({
-  type: type.ENTER_NEW_ROOM_FAILURE
+
+export const connectChatFailure = () => ({
+  type: type.CONNECT_CHAT_FAILURE
+});
+
+export const disconnectChatSuccess = () => ({
+  type: type.DISCONNECT_CHAT_SUCCESS
+});
+
+export const reconnectChatSuccess = () => ({
+  type: type.RECONNECT_CHAT_SUCCESS
 });
 
 export const matchPartnerPending = () => ({
   type: type.MATCH_PARTNER_PENDING
 });
+
 export const matchPartnerSuccess = (data) => ({
   type: type.MATCH_PARTNER_SUCCESS,
   ...data
 });
+
 export const matchPartnerRestart = () => ({
   type: type.MATCH_PARTNER_RESTART,
-});
-export const matchPartnerFailure = () => ({
-  type: type.MATCH_PARTNER_FAILURE
-});
-
-export const partnerDisconnectionSuccess = () => ({
-  type: type.PARTNER_DISCONNECTION_SUCCESS
-});
-export const partnerDisconnectionPending = () => ({
-  type: type.PARTNER_DISCONNECTION_PENDING
-});
-export const partnerDisconnectionFailure = () => ({
-  type: type.PARTNER_DISCONNECTION_FAILURE
 });
 
 export const sendNewTextSuccess = (chat) => ({
   type: type.SEND_NEW_TEXT_SUCCESS,
   chat
 });
-export const sendNewTextFailure = () => ({
-  type: type.SEND_NEW_TEXT_FAILURE
-});
+
 export const clearChatTexts = () => ({
   type: type.CLEAR_CHAT_TEXTS
 });
+
 export const startTyping = () => ({
   type: type.START_TYPING
 });
+
 export const stopTyping = () => ({
   type: type.STOP_TYPING
 });

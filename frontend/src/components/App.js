@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, Switch } from 'react-router';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Home from './Home';
 import ChatRoom from './ChatRoom';
 import Error from './Error';
@@ -7,11 +7,9 @@ import './css/normalize.v8.0.1.css';
 import './css/style.scss';
 
 const App = (props) => {
-  console.log('props', props);
   const {
     roomMatch,
     roomConnection,
-    roomDisconnection,
     textSending,
     handleRoomConnection,
     handleReconnection,
@@ -38,8 +36,11 @@ const App = (props) => {
 
   return (
     <div className="app-container">
+      {roomConnection.isError && <Redirect to="/error" />}
       <header className="app-header">
-        <h1 className="logo">SAY HELLO!</h1>
+        <h1 className="logo">
+          <span>SAY HELLO!</span>
+        </h1>
       </header>
 
       <Switch>
@@ -60,7 +61,6 @@ const App = (props) => {
               roomMatch={roomMatch}
               roomConnection={roomConnection}
               textSending={textSending}
-              roomDisconnection={roomDisconnection}
               handleReconnection={handleReconnection}
               handleNextChatting={handleNextChatting}
               handleTextSending={handleTextSending}

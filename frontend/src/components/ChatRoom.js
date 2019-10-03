@@ -7,7 +7,6 @@ const ChatRoom = (props) => {
   const {
     roomMatch,
     roomConnection,
-    roomDisconnection,
     textSending,
     handleNextChatting,
     handleReconnection,
@@ -16,59 +15,59 @@ const ChatRoom = (props) => {
     handleTypingStop
   } = props;
 
-  let textInput = React.createRef();
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (messageEndDiv) {
+        messageEndDiv.scrollIntoView();
+      }
+    }
+
+    scrollToBottom();
+  });
 
   const WAIT_INTERVAL = 800;
   const ENTER_KEY = 13;
 
-  let timer = null;
-  let messageEnd;
-
-  useEffect(() => {
-    scrollToBottom();
-  });
+  let messageEndDiv;
+  let textInput = React.createRef();
+  let stopTypingTimer = null;
 
   const triggerChange = () => {
     if (textInput && textInput.current) {
-      if (textInput.current.value.trim()) {
-        handleTypingStop();
+      handleTypingStop();
+      if (stopTypingTimer) {
+        clearTimeout(stopTypingTimer);
       }
-      clearTimeout(timer);
     }
   };
 
-  const scrollToBottom = () => {
-    if (messageEnd) {
-      messageEnd.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
+  const debouncehandleTypingStart = debounce(() => handleTypingStart(), 100, {
+    leading: true,
+    trailing: false
+  });
 
   const handleKeyDown = (e) => {
     if (e.keyCode === ENTER_KEY) {
-      if (timer) {
-        clearTimeout(timer);
+      if (stopTypingTimer) {
+        clearTimeout(stopTypingTimer);
       }
       triggerChange();
     }
   }
 
-  const debouncehandleTypingStart = debounce(() => handleTypingStart(), 300, {
-    leading: true,
-    trailing: false
-  });
-
   const handleChange = (e) => {
-    if (timer) {
-      clearTimeout(timer);
+    if (stopTypingTimer) {
+      clearTimeout(stopTypingTimer);
     }
     debouncehandleTypingStart();
 
-    timer = setTimeout(triggerChange, WAIT_INTERVAL);
+    stopTypingTimer = setTimeout(triggerChange, WAIT_INTERVAL);
   };
 
   return (
     <div className="chat-container">
       {!roomConnection.isConnected && <Redirect to="/" />}
+      {roomConnection.isError && <Redirect to="/error" />}
 
       {roomConnection.info && roomConnection.info.name && (
         <div className="info-message">
@@ -93,7 +92,7 @@ const ChatRoom = (props) => {
           </p>
         </div>
       )}
-      {roomDisconnection.isDisconnected && (
+      {roomConnection.isPartnerUnlinked && (
         <div className="info-message close-box">
           <p className="info-text">
             채팅방 연결이 종료되었습니다.
@@ -107,7 +106,7 @@ const ChatRoom = (props) => {
           </button>
         </div>
       )}
-      {roomMatch.isMatched && !roomDisconnection.isDisconnected && (
+      {!roomConnection.isPartnerUnlinked && roomMatch.isMatched && (
         <>
           <div className="btn-area">
             <button
@@ -135,8 +134,9 @@ const ChatRoom = (props) => {
                 );
               })
             )}
-            <div style={{ float:"left", clear: "both" }}
-              ref={(el) => { messageEnd = el; }}>
+            <div
+              ref={(el) => { messageEndDiv = el; }}
+            >
             </div>
           </ul>
           <form
@@ -144,7 +144,7 @@ const ChatRoom = (props) => {
             onSubmit={e => {
               e.preventDefault();
 
-              handleTextSending(textInput.current.value, roomMatch.key, roomConnection.info.id);
+              handleTextSending(textInput.current.value, roomConnection.info.id);
               textInput.current.value = '';
               textInput.current.focus();
             }}
@@ -152,7 +152,7 @@ const ChatRoom = (props) => {
             {textSending.isTyping && (
               <div className="info-type">
                 <p className="info-type">
-                  상대방이 입력중입니다...
+                  {roomMatch.partner.name} is typing...
                 </p>
               </div>
             )}
