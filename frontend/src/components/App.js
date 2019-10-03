@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Home from './Home';
 import ChatRoom from './ChatRoom';
@@ -16,23 +16,8 @@ const App = (props) => {
     handleNextChatting,
     handleTextSending,
     handleTypingStart,
-    handleTypingStop,
-    subscribeSocketEmit,
-    subscribeTextMessage,
-    unsubscribeTextMessage
+    handleTypingStop
   } = props;
-
-  useEffect(() => {
-    subscribeSocketEmit();
-  }, [ subscribeSocketEmit ]);
-
-  useEffect(() => {
-    subscribeTextMessage();
-
-    return () => {
-      unsubscribeTextMessage();
-    };
-  }, [ textSending.chats, subscribeTextMessage, unsubscribeTextMessage ]);
 
   return (
     <div className="app-container">

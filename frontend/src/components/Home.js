@@ -9,6 +9,8 @@ const Home = (props) => {
   } = props;
 
   const [ name, setName ] = useState('');
+  const [ isNameLengthOver, setNameLengthOver ] = useState(false);
+  const MAX_NAME_LENGTH = 20;
 
   return (
     <div className="container">
@@ -26,15 +28,19 @@ const Home = (props) => {
             onSubmit={e => {
               e.preventDefault();
 
-              setName('');
               handleRoomConnection(name);
+              setName('');
             }}
           >
             <input
               type="text"
               className="input-basic"
               value={name}
-              onChange={e => setName(e.target.value)}
+              placeholder="Nickname"
+              onChange={e => {
+                e.target.value.trim().length > MAX_NAME_LENGTH ? setNameLengthOver(true) : setNameLengthOver(false);
+                setName(e.target.value);
+              }}
             />
             <button
               type="submit"
@@ -42,6 +48,11 @@ const Home = (props) => {
             >
               START
             </button>
+            {isNameLengthOver && (
+              <p className="warn-message">
+                Nickname cannot be more than {MAX_NAME_LENGTH} characters
+              </p>
+            )}
           </form>
         </div>
       </div>
