@@ -4,8 +4,6 @@ const waitingQueue = [];
 
 module.exports = (io) => {
   io.on('connection', (socket) => {
-    socket.emit('connected');
-
     socket.on('requestRandomChat', (userName) => {
       totalUserList[socket.id] = userName;
 
