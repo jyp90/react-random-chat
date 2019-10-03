@@ -1,9 +1,5 @@
 @import 'variables';
 
-$screen-xs-max: 300px;
-$screen-sm-max: 400px;
-$screen-md-max: 600px;
-
 @mixin xs {
   @media (max-width: #{$screen-xs-max}) {
       @content;
