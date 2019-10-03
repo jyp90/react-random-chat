@@ -33,7 +33,7 @@ const ChatRoom = (props) => {
       if (textInput.current.value.trim()) {
         handleTypingStop();
       }
-      timer = null;
+      clearTimeout(timer);
     }
   };
 
