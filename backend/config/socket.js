@@ -79,7 +79,7 @@ module.exports = (io) => {
 
       delete totalRoomList[socket.id];
 
-      socket.broadcast.to(roomKey).emit('partnerDisconnection', roomKey);
+      socket.broadcast.to(roomKey).emit('partnerDisconnection');
     });
 
     socket.on('leaveRoom', () => {
@@ -93,7 +93,7 @@ module.exports = (io) => {
       }
       const roomKey = totalRoomList[socket.id];
 
-      socket.broadcast.to(roomKey).emit('partnerDisconnection', roomKey);
+      socket.broadcast.to(roomKey).emit('partnerDisconnection');
       delete totalRoomList[socket.id];
       delete totalUserList[socket.id];
     });

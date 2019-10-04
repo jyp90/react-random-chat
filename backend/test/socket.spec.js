@@ -6,36 +6,35 @@ require('../bin/www');
 const SOCKET_URL = 'http://localhost:8080/';
 const OPTIONS = {
   'transports': ['websocket'],
-  'force new connection': true,
-  'multiplex': false
+  'force new connection': true
 };
 
 let client;
 let client2;
 
 describe('Websocket server tests', () => {
-  before((done) => {
-    client = io.connect(SOCKET_URL, OPTIONS);
-    client2 = io.connect(SOCKET_URL, OPTIONS);
-
-    client.on('connect', () => {});
-    client2.on('connect', () => {
-      done();
-    });
-  });
 
   describe('requestRandomChat', () => {
-    afterEach((done) => {
+    beforeEach((done) => {
+      client = io.connect(SOCKET_URL, OPTIONS);
+      client2 = io.connect(SOCKET_URL, OPTIONS);
+
+      client.on('connect', () => {
+        setTimeout(done, 100);
+      });
+    });
+    after((done) => {
       client.disconnect();
       client2.disconnect();
       done();
     });
 
     it('emit initialConnect to client with object', (done) => {
-      client.once('initialConnect', (data) => {
+      client.on('initialConnect', (data) => {
         const userName = Object.values(data.totalUserList).find(name => name === 'user01');
         expect(data.connected).to.equal(true);
         expect(userName).to.equal('user01');
+        client.disconnect();
         done();
       });
 
@@ -43,8 +42,9 @@ describe('Websocket server tests', () => {
     });
 
     it('does not match if only one client request chat', (done) => {
-      client.once('completeMatch', (data) => {
-        expect(data.matched).to.equal(true);
+      client.on('completeMatch', (data) => {
+        expect(data.matched).to.equal(false);
+        client.disconnect();
       });
 
       client.emit('requestRandomChat', 'user01');
@@ -52,20 +52,34 @@ describe('Websocket server tests', () => {
     });
 
     it('matches two clients if two clients request chat', (done) => {
-      client.once('completeMatch', (data) => {
-        expect(data.matched).to.equal(true);
-        expect(data.partner.name).to.equal('user02');
-        done();
+      client = io.connect(SOCKET_URL, OPTIONS);
+      client2 = io.connect(SOCKET_URL, OPTIONS);
+      client2.on('connect', () => {
+        setTimeout(done, 100);
       });
 
-      client2.once('completeMatch', (data) => {
+      client2.on('completeMatch', (data) => {
         expect(data.matched).to.equal(true);
         expect(data.partner.name).to.equal('user01');
-        done();
       });
 
       client.emit('requestRandomChat', 'user01');
       client2.emit('requestRandomChat', 'user02');
+    });
+  });
+
+  describe('requestDisconnection', () => {
+    before((done) => {
+      client = io.connect(SOCKET_URL, OPTIONS);
+      client2 = io.connect(SOCKET_URL, OPTIONS);
+
+      client.on('connect', () => {
+        setTimeout(done, 100);
+      });
+    });
+    after((done) => {
+      client.disconnect();
+      client2.disconnect();
       done();
     });
   });
